@@ -1,4 +1,3 @@
-from __future__ import print_function
 import json
 
 class GridMap(object):
@@ -39,11 +38,11 @@ class GridMap(object):
 		for i in range(0, self.xLength):
 			for j in range(0, self.yLength):
 				if self.map[i][j]:
-					print("+", end="")
+					print 'o',
 				else:
-					print(".", end="")
+					print '.',
 			if j == self.yLength - 1:
-				print("")
+				print ''
 
 class GridManager(object):
 	limitsKey = 'limits'
