@@ -34,10 +34,21 @@ class GridMap(object):
 
 		return mappings
 
+	def toList(self):
+		gridlist = []
+
+		for i in range(0, self.xLength):
+			sublist = []
+			for j in range(0, self.yLength):
+				sublist.append(self.map[i][j])
+			gridlist.append(sublist)
+
+		return gridlist
+
 	def show(self):
 		for i in range(0, self.xLength):
 			for j in range(0, self.yLength):
-				if self.map[i][j]:
+				if self.map[self.xLength-1 - i][j]:
 					print 'o',
 				else:
 					print '.',
@@ -66,9 +77,67 @@ class GridManager(object):
 	exportGrid = staticmethod(exportGrid)
 	importGrid = staticmethod(importGrid)
 
+class LinearFiller(object):
+	def __init__(self, gridMap):
+		self.grid = gridMap
+
+	def fillLine(self, startLine, startColumn, offset, direction='h'):
+		linearRange = range(0, offset+1) if offset >= 0 else range(0, offset-1, -1)
+
+		for i in linearRange:
+			if direction == 'h':
+				self.grid.setObstacle(startLine, startColumn + i)
+			elif direction == 'v':
+				self.grid.setObstacle(startLine + i, startColumn)
+
+class VectorFiller(object):
+	def __init__(self, linearFiller):
+		self.linearFiller = linearFiller
+
+	def fillVector(self, startLine, startColumn, direction, startingDirection='h'):
+		columnDirection, lineDirection = direction
+
+		if startingDirection == 'h':
+			self.linearFiller.fillLine(startLine, startColumn, columnDirection, 'h')
+			self.linearFiller.fillLine(startLine, startColumn + columnDirection, lineDirection, 'v')
+		elif startingDirection == 'v':
+			self.linearFiller.fillLine(startLine, startColumn, lineDirection, 'v')
+			self.linearFiller.fillLine(startLine + lineDirection, startColumn, columnDirection, 'h')
+
+class PathFiller(object):
+	def __init__(self, vectorFiller):
+		self.vectorFiller = vectorFiller
+		self.startLine = 0
+		self.startColumn = 0
+
+	def fillPath(self, direction, startingDirection='h', startLine=None, startColumn=None):
+		columnDirection, lineDirection = direction
+
+		if startLine is None or startColumn is None:
+			startLine = self.startLine
+			startColumn = self.startColumn
+
+		self.vectorFiller.fillVector(startLine, startColumn, (columnDirection, lineDirection), startingDirection)
+
+		self.startLine = startLine + lineDirection
+		self.startColumn = startColumn + columnDirection
+
+		return self
+
+	def skipPath(self, direction):
+		columnDirection, lineDirection = direction
+
+		self.startLine = self.startLine + lineDirection
+		self.startColumn = self.startColumn + columnDirection
+
+		return self
+
 ###############################################################################
 ############################### TEST FUNCTIONS ################################
 ###############################################################################
+
+def sampleMap():
+	return GridMap(20,20)
 
 def testCreateAndSetGrid():
 	grid = GridMap(20,20)
@@ -83,13 +152,39 @@ def testExportGrid():
 	grid = testCreateAndSetGrid()
 	GridManager.exportGrid(grid, 'grid.json')
 
+def testLinearFiller():
+	grid = GridMap(20,20)
+	gridFiller = LinearFiller(grid)
+
+	gridFiller.fillLine(0,0, 4, 'h')
+	grid.show()
+
+def testVectorFiller():
+	grid = sampleMap()
+
+	gridFiller = VectorFiller(LinearFiller(grid))
+	gridFiller.fillVector(0,0,(4,5), 'h')
+
+	grid.show()
+
+def testPathFiller():
+	grid = sampleMap()
+
+	gridFiller = PathFiller(VectorFiller(LinearFiller(grid)))
+	gridFiller.fillPath((3,3)).fillPath((2,5)).skipPath((2,0)).fillPath((4,0))
+
+	grid.show()
+
 ###############################################################################
 ################################ MAIN FUNCTION ################################
 ###############################################################################
 
 def main():
-	testExportGrid()
-	testImportGrid()
+	#testExportGrid()
+	#testImportGrid()
+	#testLinearFiller()
+	#testVectorFiller()
+	testPathFiller()
 
 if __name__ == '__main__':
 	main()
