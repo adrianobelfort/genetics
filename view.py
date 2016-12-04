@@ -52,22 +52,3 @@ class Choreographer(object):
 		plt.colorbar(img,cmap=cmap,norm=norm,boundaries=bounds,ticks=[Choreographer.lowerBoundary,Choreographer.upperBoundary], format=ticker.FuncFormatter(self.formatColorbarLabel))
 
 		plt.show()
-
-###############################################################################
-############################### TEST FUNCTIONS ################################
-###############################################################################
-
-###############################################################################
-################################ MAIN FUNCTION ################################
-###############################################################################
-
-def main():
-	grid = GridMap(10, 10)
-	grid.setObstacle(3,5).setObstacle(6,4)
-
-	choreographer = Choreographer(grid)
-
-	choreographer.show()
-
-if __name__ == '__main__':
-	main()
