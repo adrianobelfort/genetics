@@ -163,3 +163,51 @@ class FlipFiller(object):
 	def skipFlip(self, offset):
 		self.updatePosition(offset)
 		return self
+
+class PathIterator(object):
+	def __init__(self, path):
+		self.path = path
+		self.hop = 0
+
+	def next(self):
+		if self.hop < self.path.hops():
+			point = (self.path.xpath[self.hop], self.path.ypath[self.hop])
+			self.hop += 1
+		else:
+			point = None
+
+		return point
+
+	def previous(self):
+		if self.hop >= 0:
+			point = (self.path.xpath[self.hop], self.path.ypath[self.hop])
+			self.hop -= 1
+		else:
+			point = None
+
+		return point
+
+	def reset(self):
+		self.hop = 0
+
+	def hasNext(self):
+		return self.hop < self.path.hops()
+
+class Path(object):
+	def __init__(self, xpath=[], ypath=[]):
+		self.xpath = xpath
+		self.ypath = ypath
+
+	def add(self, x, y):
+		self.xpath.append(x)
+		self.ypath.append(y)
+		return self
+
+	def getPoints(self):
+		return (self.xpath, self.ypath)
+
+	def hops(self):
+		return len(self.xpath)
+
+	def getIterator(self):
+		return PathIterator(self)

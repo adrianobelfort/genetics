@@ -17,8 +17,9 @@ class Choreographer(object):
 	upperBoundary = 5
 	turningPoint = 0
 
-	def __init__(self, grid):
+	def __init__(self, grid, path=Path()):
 		self.grid = grid
+		self.path = path
 
 	def formatColorbarLabel(x, position):
 		if x > Choreographer.turningPoint:
@@ -38,8 +39,11 @@ class Choreographer(object):
 
 		return gridpoints
 
+	def setPath(self, path):
+		self.path = path
+
 	def show(self):
-		fig1 = plt.figure()
+		figure = plt.figure()
 
 		# Make a color map of fixed colors
 		cmap = mpl.colors.ListedColormap(['white', 'blue'])
@@ -49,17 +53,15 @@ class Choreographer(object):
 		# Get the points from model
 		gridpoints = self.prepare()
 
-		# animation
-
-		data = np.random.randint(0, 20, (2,50))
-		data[0].sort()
-		data[1].sort()
-
-		print data
-
+		# Animation
 		l, = plt.plot([], [], 'r-')
-		line_ani = animation.FuncAnimation(fig1, update_line, 50, fargs=(data, l),
-		                                   interval=100, blit=True)
+		#line_ani = animation.FuncAnimation(fig1, update_line, 50, fargs=(data, l),
+		#                                   interval=100, blit=True)
+		xpath, ypath = self.path.getPoints()
+		data = np.array([xpath, ypath])
+
+		line_ani = animation.FuncAnimation(figure, update_line, self.path.hops(), fargs=(data, l),
+		                                   interval=250, blit=True)
 
 		# end of animation
 
