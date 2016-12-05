@@ -3,6 +3,13 @@ import matplotlib as mpl
 from matplotlib import pyplot as plt
 import numpy as np
 import matplotlib.ticker as ticker
+import matplotlib.animation as animation
+
+# this function gives the path to the choreographer!!
+# encapsulate it into another class!
+def update_line(num, data, line):
+    line.set_data(data[..., :num])
+    return line,
 
 class Choreographer(object):
 	# Constants
@@ -32,6 +39,8 @@ class Choreographer(object):
 		return gridpoints
 
 	def show(self):
+		fig1 = plt.figure()
+
 		# Make a color map of fixed colors
 		cmap = mpl.colors.ListedColormap(['white', 'blue'])
 		bounds = [Choreographer.lowerBoundary, Choreographer.turningPoint, Choreographer.upperBoundary]
@@ -40,8 +49,22 @@ class Choreographer(object):
 		# Get the points from model
 		gridpoints = self.prepare()
 
+		# animation
+
+		data = np.random.randint(0, 20, (2,50))
+		data[0].sort()
+		data[1].sort()
+
+		print data
+
+		l, = plt.plot([], [], 'r-')
+		line_ani = animation.FuncAnimation(fig1, update_line, 50, fargs=(data, l),
+		                                   interval=100, blit=True)
+
+		# end of animation
+
 		# Tell imshow about color map so that only set colors are used
-		img = plt.imshow(gridpoints,interpolation='nearest', cmap = cmap,norm=norm)
+		img = plt.imshow(gridpoints,interpolation='nearest', cmap = cmap,norm=norm, origin='lower')
 
 		# Set labels
 		plt.xlabel('X')

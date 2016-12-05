@@ -43,6 +43,14 @@ def testPathFiller():
 
 	grid.show()
 
+def testFlipFiller():
+	grid = sampleMap()
+
+	gridFiller = FlipFiller(LinearFiller(grid))
+	gridFiller.fillFlip(19).fillFlip(19).fillFlip(19)
+
+	grid.show()
+
 ###############################################################################
 ################################ MAIN FUNCTION ################################
 ###############################################################################
@@ -52,7 +60,8 @@ def main():
 	#testImportGrid()
 	#testLinearFiller()
 	#testVectorFiller()
-	testPathFiller()
+	#testPathFiller()
+	testFlipFiller()
 
 if __name__ == '__main__':
 	main()

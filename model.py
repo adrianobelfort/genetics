@@ -105,10 +105,10 @@ class VectorFiller(object):
 			self.linearFiller.fillLine(startLine + lineDirection, startColumn, columnDirection, 'h')
 
 class PathFiller(object):
-	def __init__(self, vectorFiller):
+	def __init__(self, vectorFiller, startLine=0, startColumn=0):
 		self.vectorFiller = vectorFiller
-		self.startLine = 0
-		self.startColumn = 0
+		self.startLine = startLine
+		self.startColumn = startColumn
 
 	def fillPath(self, direction, startingDirection='h', startLine=None, startColumn=None):
 		columnDirection, lineDirection = direction
@@ -130,4 +130,36 @@ class PathFiller(object):
 		self.startLine = self.startLine + lineDirection
 		self.startColumn = self.startColumn + columnDirection
 
+		return self
+
+class FlipFiller(object):
+	def __init__(self, linearFiller, startLine=0, startColumn=0, direction='h', way=1):
+		self.filler = linearFiller
+		self.startLine = startLine
+		self.startColumn = startColumn
+		self.direction = direction
+		self.way = way
+
+	def flipDirection(self):
+		if self.direction == 'h':
+			self.direction = 'v'
+		elif self.direction == 'v':
+			self.direction = 'h'
+			self.way = -self.way
+
+	def updatePosition(self, offset):
+		if self.direction == 'h':
+			self.startColumn = self.startColumn + self.way * offset
+		elif self.direction == 'v':
+			self.startLine = self.startLine + self.way * offset
+
+		self.flipDirection()
+
+	def fillFlip(self, offset):
+		self.filler.fillLine(self.startLine, self.startColumn, self.way * offset, self.direction)
+		self.updatePosition(offset)
+		return self
+
+	def skipFlip(self, offset):
+		self.updatePosition(offset)
 		return self
