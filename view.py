@@ -57,7 +57,7 @@ class Choreographer(object):
 		l, = plt.plot([], [], 'r-')
 		#line_ani = animation.FuncAnimation(fig1, update_line, 50, fargs=(data, l),
 		#                                   interval=100, blit=True)
-		xpath, ypath = self.path.getPoints()
+		xpath, ypath = self.path.getPointsChannels()
 		data = np.array([xpath, ypath])
 
 		line_ani = animation.FuncAnimation(figure, update_line, self.path.hops(), fargs=(data, l),

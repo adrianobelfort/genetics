@@ -171,7 +171,7 @@ class PathIterator(object):
 
 	def next(self):
 		if self.hop < self.path.hops():
-			point = (self.path.xpath[self.hop], self.path.ypath[self.hop])
+			point = self.path.getPoint(self.hop)
 			self.hop += 1
 		else:
 			point = None
@@ -180,7 +180,7 @@ class PathIterator(object):
 
 	def previous(self):
 		if self.hop >= 0:
-			point = (self.path.xpath[self.hop], self.path.ypath[self.hop])
+			point = self.path.getPoint(self.hop)
 			self.hop -= 1
 		else:
 			point = None
@@ -204,6 +204,9 @@ class Path(object):
 		return self
 
 	def getPoints(self):
+		return zip(self.xpath, self.ypath)
+
+	def getPointsChannels(self):
 		return (self.xpath, self.ypath)
 
 	def hops(self):
@@ -211,3 +214,14 @@ class Path(object):
 
 	def getIterator(self):
 		return PathIterator(self)
+
+	def getX(self, num):
+		return self.xpath[num]
+
+	def getY(self, num):
+		return self.ypath[num]
+
+	def getPoint(self, num):
+		return (self.getX(num), self.getY(num))
+
+# Genetic algorithms
