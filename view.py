@@ -17,7 +17,7 @@ class Choreographer(object):
 	upperBoundary = 5
 	turningPoint = 0
 
-	def __init__(self, grid, path=Path()):
+	def __init__(self, grid, path=None):
 		self.grid = grid
 		self.path = path
 
@@ -53,15 +53,16 @@ class Choreographer(object):
 		# Get the points from model
 		gridpoints = self.prepare()
 
-		# Animation
-		l, = plt.plot([], [], 'r-')
-		#line_ani = animation.FuncAnimation(fig1, update_line, 50, fargs=(data, l),
-		#                                   interval=100, blit=True)
-		xpath, ypath = self.path.getPointsChannels()
-		data = np.array([xpath, ypath])
+		if self.path is not None:
+			# Animation
+			l, = plt.plot([], [], 'r-')
+			#line_ani = animation.FuncAnimation(fig1, update_line, 50, fargs=(data, l),
+			#                                   interval=100, blit=True)
+			xpath, ypath = self.path.getPointsChannels()
+			data = np.array([xpath, ypath])
 
-		line_ani = animation.FuncAnimation(figure, update_line, self.path.hops(), fargs=(data, l),
-		                                   interval=250, blit=True)
+			line_ani = animation.FuncAnimation(figure, update_line, self.path.hops(), fargs=(data, l),
+			                                   interval=500, blit=True)
 
 		# end of animation
 

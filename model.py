@@ -4,12 +4,16 @@ class GridMap(object):
 	def __init__(self, xLength, yLength, obstacles = None):
 		self.xLength = xLength
 		self.yLength = yLength
+		#self.obstacles = obstacles
 
 		self.map = [[False for j in range(yLength)] for i in range(xLength)]
 
 		if obstacles is not None:
 			for x, y in obstacles:
 				self.map[x][y] = True
+
+	def getLimits(self):
+		return (self.xLength, self.yLength)
 
 	def at(self, x, y):
 		return self.map[x][y]
@@ -54,6 +58,16 @@ class GridMap(object):
 					print '.',
 			if j == self.yLength - 1:
 				print ''
+
+	def obstacles(self):
+		obstacleList = []
+
+		for i in range(0, self.xLength):
+			for j in range(0, self.yLength):
+				if self.map[i][j]:
+					obstacleList.append((i,j))
+
+		return obstacleList
 
 class GridManager(object):
 	limitsKey = 'limits'
@@ -146,6 +160,11 @@ class FlipFiller(object):
 		elif self.direction == 'v':
 			self.direction = 'h'
 			self.way = -self.way
+		return self
+
+	def flipOrientation(self):
+		self.way = -self.way
+		return self
 
 	def updatePosition(self, offset):
 		if self.direction == 'h':
@@ -202,6 +221,14 @@ class Path(object):
 		self.xpath.append(x)
 		self.ypath.append(y)
 		return self
+
+	def setPath(self, pointList):
+		self.xpath = []
+		self.ypath = []
+
+		for point in pointList:
+			self.xpath.append(point[0])
+			self.ypath.append(point[1])
 
 	def getPoints(self):
 		return zip(self.xpath, self.ypath)
